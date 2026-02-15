@@ -1,0 +1,23 @@
+name: Test RCE Vulnerability
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  test_vulnerability:
+    name: Exploit Simulation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mock Create Jira Ticket
+        id: create
+        # We simulate the Jira action by passing your Issue Title directly to output.
+        # This mimics the behavior where the action returns user-controlled data.
+        run: |
+          echo "issue=${{ github.event.issue.title }}" >> $GITHUB_OUTPUT
+
+      - name: Log created issue
+        # THIS IS THE VULNERABLE LINE.
+        # If the title contains shell commands, they will execute here.
+        run: echo "Issue ${{ steps.create.outputs.issue }} was created"
